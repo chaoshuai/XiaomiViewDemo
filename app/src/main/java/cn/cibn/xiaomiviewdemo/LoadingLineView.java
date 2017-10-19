@@ -29,7 +29,7 @@ public class LoadingLineView extends View {
     }
 
     public LoadingLineView(Context context, @Nullable AttributeSet attrs) {
-        this(context, null, 0);
+        this(context, attrs, 0);
     }
 
     public LoadingLineView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
