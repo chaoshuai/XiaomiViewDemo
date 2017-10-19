@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cn.cibn.xiaomiviewdemo.MainActivity">
+
+    <!--<cn.cibn.xiaomiviewdemo.RoundIndicatorView-->
+        <!--android:id="@+id/riv"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"/>-->
+
+    <cn.cibn.xiaomiviewdemo.XiaoMiSportView
+        android:id="@+id/xmp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!--<cn.cibn.xiaomiviewdemo.SweepGradientView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="500dp" />-->
+
+    <!--<cn.cibn.xiaomiviewdemo.LoadingLineView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content" />-->
+
+    <!--<cn.cibn.xiaomiviewdemo.MySportView-->
+        <!--android:id="@+id/my_sportview"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+
+    <!--</cn.cibn.xiaomiviewdemo.MySportView>-->
+
+</RelativeLayout>
