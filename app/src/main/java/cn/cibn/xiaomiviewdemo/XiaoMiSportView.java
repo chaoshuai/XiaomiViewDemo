@@ -11,11 +11,15 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SweepGradient;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
+
+import java.util.Random;
 
 /**
  * Created by 15210 on 2017/10/17.
@@ -46,7 +50,15 @@ public class XiaoMiSportView extends View {
     private int sweepInWidth=dp2px(3);//内圆的宽度
     private int sweepOutWidth = dp2px(3);//外圆的宽度
     private int[] indicatorColor = {0xffffffff,0x00ffffff,0x99ffffff,0xffffffff};
+    Random rand = new Random();
+    private AnimationThread animationThread;
+    private boolean isNeedFresh = true;
 
+    /** 初始圆心位置 X 与 Canvas 宽度之比 **/
+    static final float START_CIRCLE_X_SCALE = 0.5f;
+    /** 初始圆心位置 Y 与 Canvas 宽度之比 **/
+    static final float START_CIRCLE_Y_SCALE = 0.5f;
+    private FireworksCircleGraphics fireworksCircleGraphics;
 
     public int getCurrentNum() {
         return currentNum;
@@ -88,6 +100,9 @@ public class XiaoMiSportView extends View {
         setBackgroundColor(Color.parseColor("#880000FF"));
         initAttr(attrs);
         initPaint();
+        fireworksCircleGraphics = new FireworksCircleGraphics(context);
+        animationThread = new AnimationThread();
+        animationThread.start();
     }
 
     private void initPaint() {
@@ -148,16 +163,25 @@ public class XiaoMiSportView extends View {
         radius = getMeasuredWidth() / 4; //不要在构造方法里初始化，那时还没测量宽高
         canvas.save();
         canvas.translate(mWidth / 2, topDistance + radius);
-        drawLoading(canvas);
-        drawCenterText(canvas);
-        drawScale(canvas);
-        drawIndicator(canvas);
-        drawRound(canvas);
+//        drawLoading(canvas);
 
+        drawCenterText(canvas);
+        if (isNeedFresh) {
+            drawfireworks(canvas);//划线和粒子
+        } else {
+            drawScale(canvas);
+            drawIndicator(canvas);
+            drawRound(canvas);
+        }
 //        drawRound(canvas);  //画内外圆
 //        drawIndicator(canvas); //画当前进度值
 //        drawCenterText(canvas);//画中间的文字
         canvas.restore();
+    }
+
+    private void drawfireworks(Canvas canvas) {
+//        fireworksCircleGraphics.setRadius(radius);
+        fireworksCircleGraphics.draw(canvas);
     }
 
     private void drawRound(Canvas canvas) {
@@ -269,31 +293,72 @@ public class XiaoMiSportView extends View {
         animator.end();
     }
 
+    @Override
+    protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+        if (visibility == VISIBLE && animationThread.isInterrupted()) {
+            animationThread.start();
+        } else {
+            animationThread.interrupt();
+        }
+    }
+
+
+
     @SuppressWarnings("unused")
     public void setDegree(int degree) {
         this.degree = degree;
         invalidate();
     }
 
-    private void drawLoading(Canvas canvas) {
-        canvas.save();
-        mSweepGradient = new SweepGradient(0, 0, new int[]{Color.TRANSPARENT, Color.WHITE}, null);
-        mPaint = new Paint();
-        mPaint.setAntiAlias(true);
-        mPaint.setShader(mSweepGradient);
-        mPaint.setStrokeWidth(loadingLineWidth);
-        mPaint.setStyle(Paint.Style.STROKE);
-        canvas.rotate(degree, 0, 0);
-        radius -= 20;
-        RectF rectf0 = new RectF(-radius, -radius, radius, radius);
-        canvas.drawOval(rectf0, mPaint);
-        RectF rectf1 = new RectF(-radius + 13, -radius - 1, radius + 5, radius - 17);
-        canvas.drawOval(rectf1, mPaint);
-        RectF rectf2 = new RectF(-radius + 3, -radius - 14, radius + 10, radius - 10);
-        canvas.drawOval(rectf2, mPaint);
-        RectF rectf3 = new RectF(-radius + 20, -radius - 6, radius + 15, radius - 4);
-        radius += 20;
-        canvas.drawOval(rectf3, mPaint);
-        canvas.restore();
+//    private void drawLoading(Canvas canvas) {
+//        canvas.save();
+//        mSweepGradient = new SweepGradient(0, 0, new int[]{Color.TRANSPARENT, Color.WHITE}, null);
+//        mPaint = new Paint();
+//        mPaint.setAntiAlias(true);
+//        mPaint.setShader(mSweepGradient);
+//        mPaint.setStrokeWidth(loadingLineWidth);
+//        mPaint.setStyle(Paint.Style.STROKE);
+//        canvas.rotate(degree, 0, 0);
+//        Log.d("degree",degree+"");
+//        radius -= 20;
+//        RectF rectf0 = new RectF(-radius, -radius, radius, radius);
+//        canvas.drawOval(rectf0, mPaint);
+//        RectF rectf1 = new RectF(-radius + 13, -radius - 1, radius + 5, radius - 17);
+//        canvas.drawOval(rectf1, mPaint);
+//        RectF rectf2 = new RectF(-radius + 3, -radius - 14, radius + 10, radius - 10);
+//        canvas.drawOval(rectf2, mPaint);
+//        RectF rectf3 = new RectF(-radius + 20, -radius - 6, radius + 15, radius - 4);
+//        canvas.drawOval(rectf3, mPaint);
+//
+////        paint_3.setStyle(Paint.Style.FILL);
+////        paint_3.setColor(0xffffffff);
+////        paint_3.setMaskFilter(new BlurMaskFilter(dp2px(3), BlurMaskFilter.Blur.SOLID)); //需关闭硬件加速
+////        canvas.drawCircle(radius+5, 0, dp2px(4), paint_3);
+////        for (int i=0;i<5;i++) {
+////            canvas.drawCircle(radius, -30*i, dp2px(2), paint_3);
+////        }
+//        radius += 20;
+//        canvas.restore();
+//    }
+
+    class AnimationThread extends Thread{
+        int count=0;
+        @Override
+        public void run() {
+            while(true) {
+                fireworksCircleGraphics.next();
+                try {
+                    // 尽可能 17ms 更新一次
+                    sleep(17);
+                    Log.d("XiaoMi",""+count++);
+                } catch (InterruptedException ignore) {
+                }
+            }
+        }
+    }
+
+    public void setIsNeedFresh(boolean isNeedFresh){
+        this.isNeedFresh = isNeedFresh;
     }
 }
